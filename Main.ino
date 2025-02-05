@@ -58,7 +58,7 @@ void loop() {
       }
     }
   } else {
-    //onDisconnectedController();
+    stop();
   }
 
   delay(20);
@@ -105,6 +105,11 @@ void processJoysticks(ControllerPtr ctl) {
   int processedRight;
   int processedLeft;
 
+  
+  if(((!(abs(rightxAxis)>driftOffset)))&&(!((abs(leftyAxis))>driftOffset)){ //check to see if there is any input
+    stop();
+  }
+    
   if (ctl->a()) {
     inverted != inverted;
   }
