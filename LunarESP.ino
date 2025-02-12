@@ -104,22 +104,25 @@ void processJoysticks(ControllerPtr ctl) {
   //int RawRightYaxis = ctl->axisRY();
   int processedRight;
   int processedLeft;
+  int mappedRight;
+  int mappedLeft;
 
-  if (ctl->a()) {
-    inverted != inverted;
-  }
 
-  if (inverted) {
-    processedLeft = leftyAxis - (rightxAxis * sensitivityPercentage);
-    processedRight = leftyAxis + (rightxAxis * sensitivityPercentage);
-  } else {
-    processedLeft = leftyAxis - (rightxAxis * sensitivityPercentage);
-    processedRight = leftyAxis + (rightxAxis * sensitivityPercentage);
+  processedLeft = leftyAxis - (rightxAxis * sensitivityPercentage);
+  processedRight = leftyAxis + (rightxAxis * sensitivityPercentage);
+
+  if(abs(processedLeft) < driftoffset){
+    mappedLeft = 0;
   }
+  if(abs(processedRight)<driftoffset){
+    mappedRight = 0;
+  }
+  
+  
   Serial.println(processedRight);
   Serial.println(processedLeft);
-  int mappedLeft = map(processedLeft, -512, 512, 1000, 2000);
-  int mappedRight = map(processedRight, -512, 512, 1000, 2000);
+  mappedLeft = map(processedLeft, -512, 512, 1000, 2000);
+  mappedRight = map(processedRight, -512, 512, 1000, 2000);
 
   escLeft.writeMicroseconds(mappedLeft);
   escRight.writeMicroseconds(mappedRight);
