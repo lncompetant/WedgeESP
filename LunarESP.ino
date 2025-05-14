@@ -10,8 +10,8 @@ const float sensitivityPercentage = 0.50;
 bool inverted = false;
 
 // Motor control pins
-const int leftPin = 12;
-const int rightPin = 27;
+const int leftPin = 9;
+const int rightPin = 10;
 
 // Controller pointer
 ControllerPtr myControllers[BP32_MAX_GAMEPADS];
