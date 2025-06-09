@@ -4,14 +4,14 @@
 Servo escLeft;    // Left wheel motor
 Servo escRight;   // Right wheel motor
 
-const int driftOffset = 30;  //amount to offset joystick drift by
+const int driftoffset = 30;  //amount to offset joystick drift by
 bool controllerConnected = false;
 const float sensitivityPercentage = 0.50;
 bool inverted = false;
 
 // Motor control pins
-const int leftPin = 9;
-const int rightPin = 10;
+const int leftPin = D9;
+const int rightPin = D10;
 
 // Controller pointer
 ControllerPtr myControllers[BP32_MAX_GAMEPADS];
@@ -108,8 +108,8 @@ void processJoysticks(ControllerPtr ctl) {
   int mappedLeft;
 
 
-  processedLeft = leftyAxis - (rightxAxis * sensitivityPercentage);
-  processedRight = leftyAxis + (rightxAxis * sensitivityPercentage);
+  processedLeft = -(leftyAxis + (rightxAxis * sensitivityPercentage));
+  processedRight = -(leftyAxis - (rightxAxis * sensitivityPercentage)); //this is not right
 
   if(abs(processedLeft) < driftoffset){
     mappedLeft = 0;
