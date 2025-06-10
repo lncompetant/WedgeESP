@@ -108,8 +108,8 @@ void processJoysticks(ControllerPtr ctl) {
   int mappedLeft;
 
 
-  processedLeft = -(leftyAxis + (rightxAxis * sensitivityPercentage));
-  processedRight = -(leftyAxis - (rightxAxis * sensitivityPercentage)); //this is not right
+  processedLeft = -(leftyAxis - (rightxAxis * sensitivityPercentage));
+  processedRight = -(leftyAxis + (rightxAxis * sensitivityPercentage));
 
   if(abs(processedLeft) < driftoffset){
     mappedLeft = 0;
