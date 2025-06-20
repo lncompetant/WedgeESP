@@ -35,6 +35,8 @@ void setup() {
 
   // Initialize Bluepad32
   BP32.setup(&onConnectedController, &onDisconnectedController);
+
+  //to add: a while loop to search for controllers
 }
 
 void loop() {
@@ -107,7 +109,7 @@ void processJoysticks(ControllerPtr ctl) {
   int mappedRight;
   int mappedLeft;
 
-
+// the sign in front inverts the whole control, the sign after the leftyAxis inverts the turn
   processedLeft = -(leftyAxis - (rightxAxis * sensitivityPercentage));
   processedRight = -(leftyAxis + (rightxAxis * sensitivityPercentage));
 
@@ -118,8 +120,9 @@ void processJoysticks(ControllerPtr ctl) {
     mappedRight = 0;
   }
   
-  
+  Serial.print("Right: ");
   Serial.println(processedRight);
+  Serial.print("Left: ");
   Serial.println(processedLeft);
   mappedLeft = map(processedLeft, -512, 512, 1000, 2000);
   mappedRight = map(processedRight, -512, 512, 1000, 2000);
