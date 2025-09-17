@@ -6,8 +6,10 @@ Servo escRight;   // Right wheel motor
 
 const int driftoffset = 30;  //amount to offset joystick drift by
 bool controllerConnected = false;
-const float sensitivityPercentage = 0.50;
-bool inverted = false;
+const float sensitivityPercentage = 0.50;  //permanent sensitivity modifier
+float speedSensitivity = 0.5; //temp value to change speed mid fight
+float turnSensitivity = 1; //temp value to change turn sensitivity mid fight
+int inversion = 1;  //if the bot is flipped
 
 // Motor control pins
 const int leftPin = D9;
@@ -89,15 +91,7 @@ void onDisconnectedController(ControllerPtr ctl) {
   Serial.println("Controller disconnected");
 }
 
-/* DO NOT USE: DOES NOT FILTER OUT VALUES.  USE CONTROLLER OFFSET INSTEAD.
-int deadzone(int value) {  //use if your controller sucks lol
-  if ((1500-(abs(value)))<100) {
-    return 0;
-  } else {
-    return value;
-  }
-}
-*/
+
 void processJoysticks(ControllerPtr ctl) {
   // Control the wheels using the joystick
   int leftyAxis = ctl->axisY();    // Assuming this is the Y-axis for forward/backward
@@ -108,10 +102,29 @@ void processJoysticks(ControllerPtr ctl) {
   int processedLeft;
   int mappedRight;
   int mappedLeft;
+ 
+  //== PS4 R2 trigger button = 0x0080 ==//
+  if (ctl->buttons() == 0x0080) {
+    speedSensitivity = 1.0;
+  }
+  if (ctl->buttons() != 0x0080) {
+    speedSensitivity = 0.5;
+  }
 
+    //== PS4 L2 trigger button = 0x0040 ==//
+  if (ctl->buttons() == 0x0040) {
+    turnSensitivity = 0.5;
+  }
+  if (ctl->buttons() != 0x0040) {
+    turnSensitivity = 1;
+  }
+ //== PS4 Circle button = 0x0002 ==//
+  if (ctl->buttons() == 0x0002) {
+    inversion!= inversion
+  }
 // the sign in front inverts the whole control, the sign after the leftyAxis inverts the turn
-  processedLeft = -(leftyAxis - (rightxAxis * sensitivityPercentage));
-  processedRight = -(leftyAxis + (rightxAxis * sensitivityPercentage));
+  processedLeft = inversion*(leftyAxis*speedSensitivity - (rightxAxis * sensitivityPercentage*turnSensitivity));
+  processedRight = -inversion*(leftyAxis*speedSensitivity + (rightxAxis * sensitivityPercentage*turnSensitivity));
 
   if(abs(processedLeft) < driftoffset){
     mappedLeft = 0;
