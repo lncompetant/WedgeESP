@@ -6,10 +6,9 @@ Servo escRight;   // Right wheel motor
 
 const int driftoffset = 30;  //amount to offset joystick drift by
 bool controllerConnected = false;
-const float sensitivityPercentage = 0.50;  //permanent sensitivity modifier
-float speedSensitivity = 0.5; //temp value to change speed mid fight
-float turnSensitivity = 1; //temp value to change turn sensitivity mid fight
-int inversion = 1;  //if the bot is flipped
+const float sensitivityPercentage = 1.5;
+bool inverted = false;
+
 
 // Motor control pins
 const int leftPin = D9;
@@ -37,8 +36,6 @@ void setup() {
 
   // Initialize Bluepad32
   BP32.setup(&onConnectedController, &onDisconnectedController);
-
-  //to add: a while loop to search for controllers
 }
 
 void loop() {
@@ -91,7 +88,15 @@ void onDisconnectedController(ControllerPtr ctl) {
   Serial.println("Controller disconnected");
 }
 
-
+/* DO NOT USE: DOES NOT FILTER OUT VALUES.  USE CONTROLLER OFFSET INSTEAD.
+int deadzone(int value) {  //use if your controller sucks lol
+  if ((1500-(abs(value)))<100) {
+    return 0;
+  } else {
+    return value;
+  }
+}
+*/
 void processJoysticks(ControllerPtr ctl) {
   // Control the wheels using the joystick
   int leftyAxis = ctl->axisY();    // Assuming this is the Y-axis for forward/backward
@@ -102,43 +107,26 @@ void processJoysticks(ControllerPtr ctl) {
   int processedLeft;
   int mappedRight;
   int mappedLeft;
- 
-  //== PS4 R2 trigger button = 0x0080 ==//
-  if (ctl->buttons() == 0x0080) {
-    speedSensitivity = 1.0;
-  }
-  if (ctl->buttons() != 0x0080) {
-    speedSensitivity = 0.5;
-  }
 
-    //== PS4 L2 trigger button = 0x0040 ==//
-  if (ctl->buttons() == 0x0040) {
-    turnSensitivity = 0.5;
-  }
-  if (ctl->buttons() != 0x0040) {
-    turnSensitivity = 1;
-  }
- //== PS4 Circle button = 0x0002 ==//
-  if (ctl->buttons() == 0x0002) {
-    inversion!= inversion
-  }
-// the sign in front inverts the whole control, the sign after the leftyAxis inverts the turn
-  processedLeft = inversion*(leftyAxis*speedSensitivity - (rightxAxis * sensitivityPercentage*turnSensitivity));
-  processedRight = -inversion*(leftyAxis*speedSensitivity + (rightxAxis * sensitivityPercentage*turnSensitivity));
+
+  processedLeft =(leftyAxis - (rightxAxis * sensitivityPercentage));
+  processedRight = (leftyAxis + (rightxAxis * sensitivityPercentage)); //this is not right
 
   if(abs(processedLeft) < driftoffset){
     mappedLeft = 0;
   }
+
   if(abs(processedRight)<driftoffset){
     mappedRight = 0;
   }
+ 
   
-  Serial.print("Right: ");
+  
   Serial.println(processedRight);
-  Serial.print("Left: ");
   Serial.println(processedLeft);
   mappedLeft = map(processedLeft, -512, 512, 1000, 2000);
   mappedRight = map(processedRight, -512, 512, 1000, 2000);
+
 
   escLeft.writeMicroseconds(mappedLeft);
   escRight.writeMicroseconds(mappedRight);
