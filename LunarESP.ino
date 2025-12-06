@@ -22,15 +22,21 @@ ControllerPtr myControllers[BP32_MAX_GAMEPADS];
 bool escArmed = false;
 
 // Function prototypes
+
 void processJoysticks(ControllerPtr ctl);
 void armESC();
 
 
+const int ledPin = D0;  // the number of the power LED pin
 
+// constants won't change:
+const long interval = 1000;  // interval at which to blink (milliseconds)
 void setup() {
   Serial.begin(115200);
 
-  pinMode(2, OUTPUT);
+  pinMode(2, OUTPUT); //controller connected LED on board
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin,HIGH);
 
   escLeft.attach(leftPin, 1000, 2000);    // Attach the ESC for the left wheel
   escRight.attach(rightPin, 1000, 2000);  // Attach the ESC for the right wheel
@@ -38,17 +44,12 @@ void setup() {
   // Initialize Bluepad32
   BP32.setup(&onConnectedController, &onDisconnectedController);
 
-  //to add: a while loop to search for controllers
 }
 
 void loop() {
-  // Update controller data
+  digitalWrite(ledPin,HIGH);
   bool dataUpdated = BP32.update();
-  if (controllerConnected == true) {
-    digitalWrite(2, HIGH);
-  } else {
-    digitalWrite(2, LOW);
-  }
+
 
   // Process controller input
   if (dataUpdated) {
@@ -103,25 +104,6 @@ void processJoysticks(ControllerPtr ctl) {
   int mappedRight;
   int mappedLeft;
  
-  //== PS4 R2 trigger button = 0x0080 ==//
-  if (ctl->buttons() == 0x0080) {
-    speedSensitivity = 1.0;
-  }
-  if (ctl->buttons() != 0x0080) {
-    speedSensitivity = 0.5;
-  }
-
-    //== PS4 L2 trigger button = 0x0040 ==//
-  if (ctl->buttons() == 0x0040) {
-    turnSensitivity = 0.5;
-  }
-  if (ctl->buttons() != 0x0040) {
-    turnSensitivity = 1;
-  }
- //== PS4 Circle button = 0x0002 ==//
-  if (ctl->buttons() == 0x0002) {
-    inversion!= inversion
-  }
 // the sign in front inverts the whole control, the sign after the leftyAxis inverts the turn
   processedLeft = inversion*(leftyAxis*speedSensitivity - (rightxAxis * sensitivityPercentage*turnSensitivity));
   processedRight = -inversion*(leftyAxis*speedSensitivity + (rightxAxis * sensitivityPercentage*turnSensitivity));
